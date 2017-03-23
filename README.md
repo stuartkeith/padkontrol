@@ -17,7 +17,7 @@ import padkontrol
 ```
 
 See `example.py` for more in-depth usage.
-The example uses [rtmidi-python](https://github.com/superquadratic/rtmidi-python) for MIDI IO.
+The example uses [python-rtmidi](http://trac.chrisarndt.de/code/wiki/python-rtmidi) for MIDI IO.
 You will probably have to modify the OUTPUT_MIDI_PORT and INPUT_MIDI_PORT variables.
 
 # Acknowledgements

@@ -1,16 +1,21 @@
 #!/usr/bin/env python
 
 import padkontrol as pk
-import rtmidi_python as rtmidi
-
+import rtmidi
+from rtmidi.midiutil import open_midioutput, open_midiinput
 
 # should be named 'padKONTROL 1 CTRL' or similar.
 OUTPUT_MIDI_PORT = 2
 # should be named 'padKONTROL 1 PORT A' or similar
 INPUT_MIDI_PORT = 1
 
-midi_out = rtmidi.MidiOut()
-midi_out.open_port(OUTPUT_MIDI_PORT)
+
+midi_out, _ = open_midioutput(
+    OUTPUT_MIDI_PORT,
+    api=rtmidi.API_UNIX_JACK,
+    client_name="padkontrol",
+    port_name="MIDI Out")
+
 
 def send_sysex(sysex):
     midi_out.send_message(sysex)
@@ -107,12 +112,17 @@ send_sysex(pk.light_group(welcome_message, {
 
 raw_input('Press enter to demonstrate input handling (then enter again to exit this example).')
 
-midi_in = rtmidi.MidiIn()
-pk_print = PadKontrolPrint()
-sysex_buffer = []
+midi_in, _ = open_midiinput(
+    INPUT_MIDI_PORT,
+    api=rtmidi.API_UNIX_JACK,
+    client_name="padkontrol",
+    port_name="MIDI In")
 
-def midi_in_callback(message, time_stamp):
-    for byte in message:
+pk_print = PadKontrolPrint()
+
+def midi_in_callback(message, data):
+    sysex_buffer = []
+    for byte in message[0]:
         sysex_buffer.append(byte)
 
         if (byte == 0xF7):
@@ -120,11 +130,9 @@ def midi_in_callback(message, time_stamp):
             del sysex_buffer[:] # empty list
 
 midi_in.ignore_types(False, False, False)
-midi_in.callback = midi_in_callback
+midi_in.set_callback(midi_in_callback)
 
-midi_in.open_port(INPUT_MIDI_PORT)
-
-raw_input('')
+raw_input('Press enter to exit')
 
 send_sysex(pk.SYSEX_NATIVE_MODE_OFF)
 
