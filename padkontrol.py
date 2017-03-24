@@ -26,7 +26,8 @@ BUTTON_PAD = 0X30
 # light state constants
 LIGHT_STATE_OFF = 0x00
 LIGHT_STATE_ON = 0x20
-LIGHT_STATE_BLINK = 0x63
+LIGHT_STATE_ONESHOT = 0x40
+LIGHT_STATE_BLINK = 0x60
 
 # LED state constants
 LED_STATE_ON = 0x00
@@ -122,7 +123,7 @@ def light_flash(button_or_pad, duration):
 
     duration -- a number between 0 (9ms) and 1.0 (279ms).
     """
-    speed = 0x41 + int(30 * duration)
+    speed = LIGHT_STATE_ONESHOT + int(30 * duration)
 
     return light(button_or_pad, speed)
 
