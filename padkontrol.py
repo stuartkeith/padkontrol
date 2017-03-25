@@ -186,7 +186,7 @@ class PadKontrolInput:
         else:
             self.on_invalid_sysex(sysex)
 
-    def on_invalid_sysex(sysex):
+    def on_invalid_sysex(self, sysex):
         raise ValueError("unrecognised SYSEX - %s", sysex)
 
     def on_pad_down(self, pad, velocity):
